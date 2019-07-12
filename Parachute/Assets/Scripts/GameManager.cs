@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,5 +23,24 @@ public class GameManager : MonoSingleton<GameManager>
         player.transform.position = new Vector3(player.transform.position.x, vh, player.transform.position.z);
         scene.play();
         player.play();
+    }
+
+    public void gameover()
+    {
+        resetGame();
+    }
+
+    public void levelUp()
+    {
+        vh += 10;
+        resetGame();
+    }
+
+    private void resetGame()
+    {
+        player.transform.position = new Vector3(player.transform.position.x, vh, player.transform.position.z);
+        //player.stop();
+        scene.stop();
+        UI.stop();
     }
 }

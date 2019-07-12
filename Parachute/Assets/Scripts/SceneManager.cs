@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -35,8 +36,15 @@ public class SceneManager : MonoSingleton<SceneManager>
         player = PlayerController.Instance;
         pool = ObstaclePool.Instance;
         ground = GameObject.FindGameObjectWithTag("Ground");
+
         lines = new List<float>(player.getLinePositionX());
         calledObjects = new List<GameObject>();
+        ground.SetActive(false);
+    }
+
+    internal void stop()
+    {
+        cleanPath();
         ground.SetActive(false);
     }
 

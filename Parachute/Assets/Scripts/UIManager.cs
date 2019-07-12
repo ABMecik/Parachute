@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class UIManager : MonoSingleton<UIManager>
 {
@@ -41,14 +42,23 @@ public class UIManager : MonoSingleton<UIManager>
         onPlayCanvas.SetActive(true);
         onWaitCanvas.SetActive(false);
 
-        
+        cd.enabled = true;
         StartCoroutine("waiter");
         
         cd.SetText("");
         cd.enabled = false;
+
         GM.play();
         play();
 
+    }
+
+    internal void stop()
+    {
+        StopCoroutine("waiter");
+        onPlayCanvas.SetActive(false);
+        onWaitCanvas.SetActive(true);
+        sBtn.SetText(startText);
     }
 
     IEnumerator waiter()
