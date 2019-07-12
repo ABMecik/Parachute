@@ -30,6 +30,10 @@ public class PlayerController : MonoSingleton<PlayerController>
     bool isSlow;
     bool parachuteIsActive;
 
+    [Header("Animator")]
+    [SerializeField] private Animator anim;
+
+    [SerializeField] GameObject parachute;
     #endregion
 
     #region Functions
@@ -37,7 +41,17 @@ public class PlayerController : MonoSingleton<PlayerController>
     {
         rigid = GetComponent<Rigidbody>();
     }
-
+    void Start()
+    {
+#if UNITY_ANDROID || UNITY_IOS
+        StartCoroutine("moveRoutine");
+#endif
+        StartCoroutine("movement");
+        isSlow = true;
+        parachuteIsActive = false;
+        velocityLimit = 20;
+        parachute.SetActive(false);
+    }
 
     #region Routines
 
@@ -169,14 +183,14 @@ public class PlayerController : MonoSingleton<PlayerController>
     IEnumerator moveLeft()
     {
         Vector3 playerRotation = transform.rotation.eulerAngles;
-        playerRotation.y = -35;
+        playerRotation.z = 25;
 
         rigid.DOMoveX(line[0], horizontalMovementTime / 2, false);
         rigid.DORotate(playerRotation, horizontalMovementTime / 2);
 
         yield return new WaitForSeconds(horizontalMovementDuration);
 
-        playerRotation.y = 0;
+        playerRotation.z = 0;
 
         rigid.DOMoveX(line[1], horizontalMovementTime, false);
         rigid.DORotate(playerRotation, horizontalMovementTime);
@@ -185,14 +199,14 @@ public class PlayerController : MonoSingleton<PlayerController>
     IEnumerator moveRight()
     {
         Vector3 playerRotation = transform.rotation.eulerAngles;
-        playerRotation.y = 35;
+        playerRotation.z = -25;
 
         rigid.DOMoveX(line[2], horizontalMovementTime / 2, false);
         rigid.DORotate(playerRotation, horizontalMovementTime / 2);
 
         yield return new WaitForSeconds(horizontalMovementDuration);
 
-        playerRotation.y = 0;
+        playerRotation.z = 0;
 
         rigid.DOMoveX(line[1], horizontalMovementTime, false);
         rigid.DORotate(playerRotation, horizontalMovementTime);
@@ -200,12 +214,21 @@ public class PlayerController : MonoSingleton<PlayerController>
 
     IEnumerator slowUp()
     {
+        anim.SetBool("Slow", false);
+        Vector3 playerRotation = transform.rotation.eulerAngles;
+        playerRotation.x = 15;
+        rigid.DORotate(playerRotation, horizontalMovementTime / 2);
+
         velocityLimit = 20;
         yield return null;
     }
 
     IEnumerator dive()
     {
+        anim.SetBool("Slow", true);
+        Vector3 playerRotation = transform.rotation.eulerAngles;
+        playerRotation.x = 65;
+        rigid.DORotate(playerRotation, horizontalMovementTime / 2);
         velocityLimit = 30;
         yield return null;
     }
@@ -213,11 +236,12 @@ public class PlayerController : MonoSingleton<PlayerController>
 
     IEnumerator openParachute()
     {
+        parachute.SetActive(true);
+        anim.SetBool("Open", true);
         parachuteIsActive = true;
         velocityLimit = 10;
         yield return null;
     }
-
     #endregion
 
     #region Get Functions
@@ -237,6 +261,20 @@ public class PlayerController : MonoSingleton<PlayerController>
         return speed;
     }
     #endregion
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Bird")
+        {
+            if (!isSlow)
+            {
+                StartCoroutine("slowUp");
+                isSlow = true;
+            }else{
+                Debug.Log("Died");
+            }
+        }
+    }
 
     #endregion
 
