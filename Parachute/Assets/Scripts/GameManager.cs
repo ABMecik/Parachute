@@ -2,17 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoSingleton<GameManager>
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    #region Singelton
+    private GameManager() { }
 
-    // Update is called once per frame
-    void Update()
+    public static GameManager Instance { get; private set; }
+
+    private void Awake()
     {
-        
+
+        Application.targetFrameRate = 60;
+
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            //Destroy(gameObject);
+        }
+
     }
+    #endregion
 }
