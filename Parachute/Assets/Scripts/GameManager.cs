@@ -42,5 +42,6 @@ public class GameManager : MonoSingleton<GameManager>
         player.stopAllRoutines();
         scene.stop();
         UI.stop();
+        player.restart();
     }
 }

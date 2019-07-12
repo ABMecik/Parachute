@@ -21,7 +21,7 @@ public class SceneManager : MonoSingleton<SceneManager>
     private Vector3 startPos;
     private Vector3 currentPos;
     private Vector3 endPos;
-    private List<float> lines;
+    [SerializeField]private List<float> lines;
 
     [SerializeField] float minObsDistance = 2f;
     [SerializeField] float maxObsDistance = 10f;
@@ -59,9 +59,10 @@ public class SceneManager : MonoSingleton<SceneManager>
 
     public void cleanPath()
     {
-        foreach(GameObject go in calledObjects)
+        while (calledObjects.Count != 0)
         {
-            go.SetActive(false);
+            calledObjects[0].SetActive(false);
+            calledObjects.RemoveAt(0);
         }
         calledObjects.Clear();
     }
@@ -72,13 +73,14 @@ public class SceneManager : MonoSingleton<SceneManager>
         obs.SetActive(false);
     }
 
-    IEnumerator path() {
+    IEnumerator path()
+    {
         while (currentPos.y > endPos.y)
         {
             float addDistance = UnityEngine.Random.Range(minObsDistance, maxObsDistance);
-            float line = lines[UnityEngine.Random.Range(0,lines.Count)];
-            currentPos = currentPos - new Vector3(line,addDistance,0);
-            if(currentPos.y <= endPos.y) { break; }
+            float line = lines[UnityEngine.Random.Range(0, lines.Count)];
+            currentPos = new Vector3(line, currentPos.y-addDistance, currentPos.z);
+            if (currentPos.y <= endPos.y) { break; }
 
             GameObject newObs = pool.SpawnFromPool("Bird", currentPos) as GameObject;
             calledObjects.Add(newObs);

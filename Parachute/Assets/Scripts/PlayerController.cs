@@ -21,14 +21,15 @@ public class PlayerController : MonoSingleton<PlayerController>
 
     [Header("Speed Variables")]
     [SerializeField] float speed;
-    [Range(20, 70)] [SerializeField] float velocityLimit = 30;
+    [Range(20, 70)] [SerializeField] float velocityLimit = 10;
 
     Rigidbody rigid;
     private Touch touch = default(Touch);
     private Vector2 startPosition = Vector2.zero;
     private float startTime;
-    bool isSlow;
+    [SerializeField] bool isSlow;
     bool parachuteIsActive;
+    GameManager gameManager;
 
     [Header("Animator")]
     [SerializeField] private Animator anim;
@@ -40,6 +41,7 @@ public class PlayerController : MonoSingleton<PlayerController>
     void Awake()
     {
         rigid = GetComponent<Rigidbody>();
+        gameManager = GameManager.Instance;
     }
     void Start()
     {
@@ -49,7 +51,7 @@ public class PlayerController : MonoSingleton<PlayerController>
         StartCoroutine("movement");
         isSlow = true;
         parachuteIsActive = false;
-        velocityLimit = 20;
+        velocityLimit = 5;
         parachute.SetActive(false);
     }
 
@@ -63,7 +65,7 @@ public class PlayerController : MonoSingleton<PlayerController>
         StartCoroutine("movement");
         isSlow = true;
         parachuteIsActive = false;
-        velocityLimit = 20;
+        velocityLimit = 5;
     }
 
     IEnumerator movement()
@@ -104,7 +106,7 @@ public class PlayerController : MonoSingleton<PlayerController>
         StartCoroutine("velocityControl");
         while (true)
         {
-            if (Input.touches.Length > 0)
+            if (Input.touches.Length > 0 && !parachuteIsActive)
             {
                 touch = Input.touches[0];
 
@@ -219,7 +221,7 @@ public class PlayerController : MonoSingleton<PlayerController>
         playerRotation.x = 15;
         rigid.DORotate(playerRotation, horizontalMovementTime / 2);
 
-        velocityLimit = 20;
+        velocityLimit = 5;
         yield return null;
     }
 
@@ -229,7 +231,7 @@ public class PlayerController : MonoSingleton<PlayerController>
         Vector3 playerRotation = transform.rotation.eulerAngles;
         playerRotation.x = 65;
         rigid.DORotate(playerRotation, horizontalMovementTime / 2);
-        velocityLimit = 30;
+        velocityLimit = 7;
         yield return null;
     }
 
@@ -239,7 +241,7 @@ public class PlayerController : MonoSingleton<PlayerController>
         parachute.SetActive(true);
         anim.SetBool("Open", true);
         parachuteIsActive = true;
-        velocityLimit = 10;
+        velocityLimit = 3;
         yield return null;
     }
 
@@ -267,19 +269,36 @@ public class PlayerController : MonoSingleton<PlayerController>
     }
     #endregion
 
+    public void restart()
+    {
+        StartCoroutine("openParachute");
+
+        isSlow = true;
+        parachuteIsActive = false;
+        velocityLimit = 5;
+        parachute.SetActive(false);
+
+
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Bird")
         {
             if (!isSlow)
             {
+                Debug.Log("Touch");
                 StartCoroutine("slowUp");
                 isSlow = true;
             }
             else
             {
-                Debug.Log("Died");
+                gameManager.gameover();
             }
+        }
+        if (other.gameObject.tag == "Ground")
+        {
+            gameManager.levelUp();
         }
     }
 

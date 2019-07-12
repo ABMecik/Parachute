@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Emirhan's Scene 1.unity
+    guid: 48824b2bac03e4b4b8e76f8af70559e5
   m_configObjects: {}
