@@ -12,6 +12,7 @@ public class PlayerController : MonoSingleton<PlayerController>
     [SerializeField] private float minimumSwipeDistanceX;
     [SerializeField] private float timeDifferenceLimit = 0.5f;
     [SerializeField] private float horizontalMovementTime = 0.5f;
+    [SerializeField] private float horizontalMovementDuration = 0.5f;
 
     [Header("Line Variables")]
     [SerializeField] private float[] line = { -2.75f, 0, 2.75f };
@@ -28,7 +29,7 @@ public class PlayerController : MonoSingleton<PlayerController>
     #region Functions
     void Awake()
     {
-        rigid= GetComponent<Rigidbody>();
+        rigid = GetComponent<Rigidbody>();
     }
     void Start()
     {
@@ -62,7 +63,7 @@ public class PlayerController : MonoSingleton<PlayerController>
                 StartCoroutine("moveRight");
             }
 
-            yield return new WaitForFixedUpdate();
+            yield return new WaitForSecondsRealtime(0.01f);
         }
     }
 
@@ -125,15 +126,24 @@ public class PlayerController : MonoSingleton<PlayerController>
 
     IEnumerator moveLeft()
     {
+        Vector3 playerRotation = transform.rotation.eulerAngles;
+        playerRotation.z = 15;
+
         rigid.DOMoveX(line[0], horizontalMovementTime, false);
-        yield return new WaitForSeconds(horizontalMovementTime);
+        rigid.DORotate(playerRotation, horizontalMovementTime);
+
+        yield return new WaitForSeconds(horizontalMovementDuration);
+
+        playerRotation.z = 0;
+
         rigid.DOMoveX(line[1], horizontalMovementTime, false);
+        rigid.DORotate(playerRotation, horizontalMovementTime);
     }
 
     IEnumerator moveRight()
     {
         rigid.DOMoveX(line[2], horizontalMovementTime, false);
-        yield return new WaitForSeconds(horizontalMovementTime);
+        yield return new WaitForSeconds(horizontalMovementDuration);
         rigid.DOMoveX(line[1], horizontalMovementTime, false);
     }
 
