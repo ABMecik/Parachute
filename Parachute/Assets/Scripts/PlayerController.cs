@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class PlayerController : MonoSingleton<PlayerController>
 {
@@ -10,10 +11,14 @@ public class PlayerController : MonoSingleton<PlayerController>
     [SerializeField] private float minimumSwipeDistanceY;
     [SerializeField] private float minimumSwipeDistanceX;
     [SerializeField] private float timeDifferenceLimit = 0.5f;
+    [Header("Line Variables")]
+    [SerializeField] private float[] line = { -2.75f, 0, 2.75f };
 
     private Touch touch = default(Touch);
     private Vector2 startPosition = Vector2.zero;
     private float startTime;
+
+
 
     #endregion
 
@@ -153,6 +158,11 @@ public class PlayerController : MonoSingleton<PlayerController>
     public Vector3 getPosition()
     {
         return transform.position;
+    }
+
+    public float[] getLinePositionX()
+    {
+        return line;
     }
     #endregion
 
