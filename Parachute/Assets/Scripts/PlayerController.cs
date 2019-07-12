@@ -19,7 +19,45 @@ public class PlayerController : MonoSingleton<PlayerController>
 
     #region Functions
 
+    void Start()
+    {
+#if UNITY_ANDROID || UNITY_IOS
+        StartCoroutine("moveRoutine");
+#endif
 
+#if UnityEngine
+        StartCoroutine("movement");
+#endif
+
+    }
+
+    #region Routines
+
+    IEnumerator movement()
+    {
+        while (true)
+        {
+
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+
+            }
+            else if (Input.GetKeyDown(KeyCode.S))
+            {
+
+            }
+            else if (Input.GetKeyDown(KeyCode.A))
+            {
+
+            }
+            else if (Input.GetKeyDown(KeyCode.D))
+            {
+
+            }
+
+            yield return new WaitForFixedUpdate();
+        }
+    }
 
     IEnumerator moveRoutine()
     {
@@ -47,11 +85,11 @@ public class PlayerController : MonoSingleton<PlayerController>
                             {
                                 if (positionDelta.y > 0 && Mathf.Abs(positionDelta.y) > minimumSwipeDistanceY)//Up
                                 {
-                                    Debug.Log("Up");
+                                    StartCoroutine("slowUp");
                                 }
                                 else
                                 {
-                                    Debug.Log("Down");
+                                    StartCoroutine("dive");
                                 }
                             }
                         }
@@ -61,11 +99,11 @@ public class PlayerController : MonoSingleton<PlayerController>
                             {
                                 if (positionDelta.x > 0 && Mathf.Abs(positionDelta.x) > minimumSwipeDistanceX && !timeOut)//Right
                                 {
-                                    Debug.Log("Right");
+                                    StartCoroutine("moveRight");
                                 }
                                 else//left
                                 {
-                                    Debug.Log("Left");
+                                    StartCoroutine("moveLeft");
                                 }
 
                             }
@@ -74,15 +112,49 @@ public class PlayerController : MonoSingleton<PlayerController>
                         break;
                 }
             }
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
     }
 
+    IEnumerator moveLeft()
+    {
+
+        yield return null;
+    }
+
+    IEnumerator moveRight()
+    {
+
+        yield return null;
+    }
+
+    IEnumerator slowUp()
+    {
+
+        yield return null;
+    }
+
+    IEnumerator dive()
+    {
+
+        yield return null;
+    }
+
+    IEnumerator openParachute()
+    {
+
+        yield return null;
+    }
+
+    #endregion
+
+    #region Get Functions
 
     public Vector3 getPosition()
     {
         return transform.position;
     }
+    #endregion
 
     #endregion
 
