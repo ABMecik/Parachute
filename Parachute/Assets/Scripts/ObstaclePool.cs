@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObstaclePool : MonoSingleton<GameManager>
+public class ObstaclePool : MonoSingleton<ObstaclePool>
 {
     [System.Serializable]
     public struct Pool
