@@ -5,7 +5,7 @@ using UnityEngine;
 public class SceneManager : MonoSingleton<SceneManager>
 {
 
-    enum Optional
+    public enum Optional
     {
         Release,
         Yes,
@@ -25,7 +25,7 @@ public class SceneManager : MonoSingleton<SceneManager>
     [SerializeField] float minObsDistance = 2f;
     [SerializeField] float maxObsDistance = 10f;
 
-    [SerializeField] Optional ObstacleCanMove = Optional.Release;
+    public Optional ObstacleCanMove = Optional.Release;
 
     private List<GameObject> calledObjects;
 
@@ -37,19 +37,15 @@ public class SceneManager : MonoSingleton<SceneManager>
         ground = GameObject.FindGameObjectWithTag("Ground");
         lines = new List<float>(player.getLinePositionX());
         calledObjects = new List<GameObject>();
-        startPath();
-    }
-
-    public void startPath()
-    {
-
-        startPos = player.getPosition() - new Vector3(0, SafeZoneRadius, 0);
-        endPos = ground.transform.position + new Vector3(0, SafeZoneRadius, 0);
-        currentPos = startPos;
+        ground.SetActive(false);
     }
 
     public void play()
     {
+        ground.SetActive(true);
+        startPos = player.getPosition() - new Vector3(0, SafeZoneRadius, 0);
+        endPos = ground.transform.position + new Vector3(0, SafeZoneRadius, 0);
+        currentPos = startPos;
         StartCoroutine("path");
     }
 

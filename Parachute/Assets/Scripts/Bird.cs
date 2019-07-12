@@ -8,6 +8,7 @@ public class Bird : MonoBehaviour
     private List<float> lines;
     PlayerController player;
     SceneManager scene;
+    [SerializeField] bool canFly;
 
     private void Start()
     {
@@ -18,8 +19,13 @@ public class Bird : MonoBehaviour
 
     private void OnBecameVisible()
     {
-        startFly();
+        if (scene.ObstacleCanMove.Equals("Yes") || (scene.ObstacleCanMove.Equals("Release") && canFly))
+        {
+            startFly();
+        }
+        
     }
+
     private void OnBecameInvisible()
     {
         SceneManager.Instance.removeObs(gameObject);

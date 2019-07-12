@@ -7,17 +7,19 @@ public class GameManager : MonoSingleton<GameManager>
 
     PlayerController player;
     SceneManager scene;
+    UIManager UI;
     public float vh = 100f;
 
     private void Start()
     {
         scene = SceneManager.Instance;
         player = PlayerController.Instance;
-        player.transform.position = new Vector3(player.transform.position.x, vh, player.transform.position.z);
+        UI = UIManager.Instance;
     }
 
     public void play()
     {
+        player.transform.position = new Vector3(player.transform.position.x, vh, player.transform.position.z);
         scene.play();
         player.play();
     }
