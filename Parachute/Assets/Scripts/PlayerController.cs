@@ -11,9 +11,12 @@ public class PlayerController : MonoSingleton<PlayerController>
     [SerializeField] private float minimumSwipeDistanceY;
     [SerializeField] private float minimumSwipeDistanceX;
     [SerializeField] private float timeDifferenceLimit = 0.5f;
+    [SerializeField] private float horizontalMovementTime = 0.5f;
+
     [Header("Line Variables")]
     [SerializeField] private float[] line = { -2.75f, 0, 2.75f };
 
+    Rigidbody rigid;
     private Touch touch = default(Touch);
     private Vector2 startPosition = Vector2.zero;
     private float startTime;
@@ -23,17 +26,16 @@ public class PlayerController : MonoSingleton<PlayerController>
     #endregion
 
     #region Functions
-
+    void Awake()
+    {
+        rigid= GetComponent<Rigidbody>();
+    }
     void Start()
     {
 #if UNITY_ANDROID || UNITY_IOS
         StartCoroutine("moveRoutine");
 #endif
-
-#if UnityEngine
         StartCoroutine("movement");
-#endif
-
     }
 
     #region Routines
@@ -53,11 +55,11 @@ public class PlayerController : MonoSingleton<PlayerController>
             }
             else if (Input.GetKeyDown(KeyCode.A))
             {
-
+                StartCoroutine("moveLeft");
             }
             else if (Input.GetKeyDown(KeyCode.D))
             {
-
+                StartCoroutine("moveRight");
             }
 
             yield return new WaitForFixedUpdate();
@@ -123,14 +125,16 @@ public class PlayerController : MonoSingleton<PlayerController>
 
     IEnumerator moveLeft()
     {
-
-        yield return null;
+        rigid.DOMoveX(line[0], horizontalMovementTime, false);
+        yield return new WaitForSeconds(horizontalMovementTime);
+        rigid.DOMoveX(line[1], horizontalMovementTime, false);
     }
 
     IEnumerator moveRight()
     {
-
-        yield return null;
+        rigid.DOMoveX(line[2], horizontalMovementTime, false);
+        yield return new WaitForSeconds(horizontalMovementTime);
+        rigid.DOMoveX(line[1], horizontalMovementTime, false);
     }
 
     IEnumerator slowUp()
