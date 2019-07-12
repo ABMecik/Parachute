@@ -21,54 +21,60 @@ public class PlayerController : MonoSingleton<PlayerController>
 
 
 
-    void movement()
+    IEnumerator moveRoutine()
     {
-        if (Input.touches.Length > 0)
+        while (true)
         {
-            touch = Input.touches[0];
-
-            switch (touch.phase)
+            if (Input.touches.Length > 0)
             {
-                case TouchPhase.Began:
-                    startPosition = touch.position;
-                    startTime = Time.time;
-                    break;
-                case TouchPhase.Moved:
-                    Vector3 positionDelta = (Vector2)touch.position - startPosition;
+                touch = Input.touches[0];
 
-                    float timeDifference = Time.time - startTime;
-                    bool timeOut = timeDifference > timeDifferenceLimit;
+                switch (touch.phase)
+                {
+                    case TouchPhase.Began:
+                        startPosition = touch.position;
+                        startTime = Time.time;
+                        break;
+                    case TouchPhase.Moved:
+                        Vector3 positionDelta = (Vector2)touch.position - startPosition;
 
-                    if (Mathf.Abs(positionDelta.y) > Mathf.Abs(positionDelta.x))
-                    {
-                        if (!timeOut)
+                        float timeDifference = Time.time - startTime;
+                        bool timeOut = timeDifference > timeDifferenceLimit;
+
+                        if (Mathf.Abs(positionDelta.y) > Mathf.Abs(positionDelta.x))
                         {
-                            if (positionDelta.y > 0 && Mathf.Abs(positionDelta.y) > minimumSwipeDistanceY)//Up
+                            if (!timeOut)
                             {
-                                
+                                if (positionDelta.y > 0 && Mathf.Abs(positionDelta.y) > minimumSwipeDistanceY)//Up
+                                {
+                                    Debug.Log("Up");
+                                }
+                                else
+                                {
+                                    Debug.Log("Down");
+                                }
                             }
-                            else
+                        }
+                        else
+                        {
+                            if (!timeOut)
                             {
+                                if (positionDelta.x > 0 && Mathf.Abs(positionDelta.x) > minimumSwipeDistanceX && !timeOut)//Right
+                                {
+                                    Debug.Log("Right");
+                                }
+                                else//left
+                                {
+                                    Debug.Log("Left");
+                                }
 
                             }
                         }
-                    }
-                    else
-                    {
-                        if (!timeOut)
-                        {
-                            if (positionDelta.x > 0 && Mathf.Abs(positionDelta.x) > minimumSwipeDistanceX && !timeOut)//Right
-                            {
-                            }
-                            else//left
-                            {
-                            }
-
-                        }
-                    }
-                    startTime = 0;
-                    break;
+                        startTime = 0;
+                        break;
+                }
             }
+            yield return null;
         }
     }
 
