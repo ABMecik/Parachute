@@ -258,7 +258,7 @@ public class PlayerController : MonoSingleton<PlayerController>
 
     public float getSpeed()
     {
-        return speed;
+        return Mathf.Abs(speed);
     }
     #endregion
 
