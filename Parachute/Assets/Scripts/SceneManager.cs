@@ -27,12 +27,16 @@ public class SceneManager : MonoSingleton<SceneManager>
 
     [SerializeField] Optional ObstacleCanMove = Optional.Release;
 
+    private List<GameObject> calledObjects;
+
+
     private void Start()
     {
         player = PlayerController.Instance;
         pool = ObstaclePool.Instance;
         ground = GameObject.FindGameObjectWithTag("Ground");
         lines = new List<float>(player.getLinePositionX());
+        calledObjects = new List<GameObject>();
         startPath();
     }
 
@@ -43,9 +47,22 @@ public class SceneManager : MonoSingleton<SceneManager>
         endPos = ground.transform.position + new Vector3(0, SafeZoneRadius, 0);
         currentPos = startPos;
 
-        Debug.Log(startPos + " || " + endPos + " || " + currentPos);
-
         StartCoroutine("path");
+    }
+
+    public void cleanPath()
+    {
+        foreach(GameObject go in calledObjects)
+        {
+            go.SetActive(false);
+        }
+        calledObjects.Clear();
+    }
+
+    public void removeObs(GameObject obs)
+    {
+        calledObjects.Remove(obs);
+        obs.SetActive(false);
     }
 
     IEnumerator path() {
@@ -56,11 +73,8 @@ public class SceneManager : MonoSingleton<SceneManager>
             currentPos = currentPos - new Vector3(line,addDistance,0);
             if(currentPos.y <= endPos.y) { break; }
 
-
-
-            Debug.Log(currentPos);
-
-            pool.SpawnFromPool("Bird", currentPos);
+            GameObject newObs = pool.SpawnFromPool("Bird", currentPos) as GameObject;
+            calledObjects.Add(newObs);
 
             yield return null;
         }
