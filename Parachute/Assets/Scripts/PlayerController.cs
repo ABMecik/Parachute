@@ -27,6 +27,8 @@ public class PlayerController : MonoSingleton<PlayerController>
     private Touch touch = default(Touch);
     private Vector2 startPosition = Vector2.zero;
     private float startTime;
+    bool isSlow;
+    bool parachuteIsActive;
 
     #endregion
 
@@ -35,28 +37,40 @@ public class PlayerController : MonoSingleton<PlayerController>
     {
         rigid = GetComponent<Rigidbody>();
     }
-    void Start()
+
+
+    #region Routines
+
+    public void play()
     {
 #if UNITY_ANDROID || UNITY_IOS
         StartCoroutine("moveRoutine");
 #endif
         StartCoroutine("movement");
+        isSlow = true;
+        parachuteIsActive = false;
+        velocityLimit = 20;
     }
-
-    #region Routines
 
     IEnumerator movement()
     {
         while (true)
         {
             StartCoroutine("velocityControl");
-            if (Input.GetKeyDown(KeyCode.W))
+            if (Input.GetKeyDown(KeyCode.W) && !parachuteIsActive)
             {
-
+                if (isSlow)
+                    StartCoroutine("openParachute");
+                else
+                {
+                    StartCoroutine("slowUp");
+                    isSlow = true;
+                }
             }
-            else if (Input.GetKeyDown(KeyCode.S))
+            else if (Input.GetKeyDown(KeyCode.S) && !parachuteIsActive)
             {
-
+                StartCoroutine("dive");
+                isSlow = false;
             }
             else if (Input.GetKeyDown(KeyCode.A))
             {
@@ -98,11 +112,18 @@ public class PlayerController : MonoSingleton<PlayerController>
                             {
                                 if (positionDelta.y > 0 && Mathf.Abs(positionDelta.y) > minimumSwipeDistanceY)//Up
                                 {
-                                    StartCoroutine("slowUp");
+                                    if (isSlow)
+                                        StartCoroutine("openParachute");
+                                    else
+                                    {
+                                        StartCoroutine("slowUp");
+                                        isSlow = true;
+                                    }
                                 }
                                 else
                                 {
                                     StartCoroutine("dive");
+                                    isSlow = false;
                                 }
                             }
                         }
@@ -125,6 +146,8 @@ public class PlayerController : MonoSingleton<PlayerController>
                         break;
                 }
             }
+            speed = rigid.velocity.y * 10;
+            speed = (int)speed;
             yield return new WaitForFixedUpdate();
         }
     }
@@ -177,25 +200,21 @@ public class PlayerController : MonoSingleton<PlayerController>
 
     IEnumerator slowUp()
     {
-
+        velocityLimit = 20;
         yield return null;
     }
 
     IEnumerator dive()
     {
-
+        velocityLimit = 30;
         yield return null;
     }
 
-    IEnumerator glide()
-    {
-
-        yield return null;
-    }
 
     IEnumerator openParachute()
     {
-        
+        parachuteIsActive = true;
+        velocityLimit = 10;
         yield return null;
     }
 
@@ -211,6 +230,11 @@ public class PlayerController : MonoSingleton<PlayerController>
     public float[] getLinePositionX()
     {
         return line;
+    }
+
+    public float getSpeed()
+    {
+        return speed;
     }
     #endregion
 
