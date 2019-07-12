@@ -2,18 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class SceneManager : MonoBehaviour
 {
     #region Singelton
-    private GameManager() { }
+    private SceneManager() { }
 
-    public static GameManager Instance { get; private set; }
+    public static SceneManager Instance { get; private set; }
 
     private void Awake()
     {
-
-        Application.targetFrameRate = 60;
-
         if (Instance == null)
         {
             Instance = this;
