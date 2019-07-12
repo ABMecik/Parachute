@@ -242,6 +242,11 @@ public class PlayerController : MonoSingleton<PlayerController>
         velocityLimit = 10;
         yield return null;
     }
+
+    public void stopAllRoutines()
+    {
+        StopAllCoroutines();
+    }
     #endregion
 
     #region Get Functions
@@ -258,7 +263,7 @@ public class PlayerController : MonoSingleton<PlayerController>
 
     public float getSpeed()
     {
-        return speed;
+        return Mathf.Abs(speed);
     }
     #endregion
 
@@ -270,7 +275,9 @@ public class PlayerController : MonoSingleton<PlayerController>
             {
                 StartCoroutine("slowUp");
                 isSlow = true;
-            }else{
+            }
+            else
+            {
                 Debug.Log("Died");
             }
         }
