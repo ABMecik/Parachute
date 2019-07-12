@@ -187,9 +187,15 @@ public class PlayerController : MonoSingleton<PlayerController>
         yield return null;
     }
 
-    IEnumerator openParachute()
+    IEnumerator glide()
     {
 
+        yield return null;
+    }
+
+    IEnumerator openParachute()
+    {
+        
         yield return null;
     }
 

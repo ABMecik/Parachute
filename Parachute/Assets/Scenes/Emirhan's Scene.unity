@@ -766,12 +766,14 @@ MonoBehaviour:
   minimumSwipeDistanceY: 0.25
   minimumSwipeDistanceX: 0.25
   timeDifferenceLimit: 0.5
-  horizontalMovementTime: 1
-  horizontalMovementDuration: 2
+  horizontalMovementTime: 0.5
+  horizontalMovementDuration: 0.6
   line:
   - -3.5
   - 0
   - 3.5
+  speed: 0
+  velocityLimit: 30
 --- !u!4 &2084709899 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8807626366300707059, guid: cdf1a5d73da9f42afab009063f79dd21,
