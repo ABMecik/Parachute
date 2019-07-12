@@ -39,7 +39,7 @@ public class GameManager : MonoSingleton<GameManager>
     private void resetGame()
     {
         player.transform.position = new Vector3(player.transform.position.x, vh, player.transform.position.z);
-        //player.stop();
+        player.stopAllRoutines();
         scene.stop();
         UI.stop();
     }
