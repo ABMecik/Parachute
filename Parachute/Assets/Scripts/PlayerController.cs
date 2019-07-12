@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using System.ComponentModel;
 
 public class PlayerController : MonoSingleton<PlayerController>
 {
@@ -17,12 +18,15 @@ public class PlayerController : MonoSingleton<PlayerController>
     [Header("Line Variables")]
     [SerializeField] private float[] line = { -2.75f, 0, 2.75f };
 
+
+    [Header("Speed Variables")]
+    [SerializeField] float speed;
+    [Range(20, 70)] [SerializeField] float velocityLimit = 30;
+
     Rigidbody rigid;
     private Touch touch = default(Touch);
     private Vector2 startPosition = Vector2.zero;
     private float startTime;
-
-
 
     #endregion
 
@@ -45,7 +49,7 @@ public class PlayerController : MonoSingleton<PlayerController>
     {
         while (true)
         {
-
+            StartCoroutine("velocityControl");
             if (Input.GetKeyDown(KeyCode.W))
             {
 
@@ -69,6 +73,7 @@ public class PlayerController : MonoSingleton<PlayerController>
 
     IEnumerator moveRoutine()
     {
+        StartCoroutine("velocityControl");
         while (true)
         {
             if (Input.touches.Length > 0)
@@ -124,17 +129,31 @@ public class PlayerController : MonoSingleton<PlayerController>
         }
     }
 
+    IEnumerator velocityControl()
+    {
+        while (true)
+        {
+            Vector3 velocity = rigid.velocity;
+
+            if (velocity.y < -velocityLimit)
+            {
+                rigid.velocity = new Vector3(velocity.x, -velocityLimit, velocity.z);
+            }
+            yield return new WaitForFixedUpdate();
+        }
+    }
+
     IEnumerator moveLeft()
     {
         Vector3 playerRotation = transform.rotation.eulerAngles;
-        playerRotation.z = 15;
+        playerRotation.y = -35;
 
-        rigid.DOMoveX(line[0], horizontalMovementTime, false);
-        rigid.DORotate(playerRotation, horizontalMovementTime);
+        rigid.DOMoveX(line[0], horizontalMovementTime / 2, false);
+        rigid.DORotate(playerRotation, horizontalMovementTime / 2);
 
         yield return new WaitForSeconds(horizontalMovementDuration);
 
-        playerRotation.z = 0;
+        playerRotation.y = 0;
 
         rigid.DOMoveX(line[1], horizontalMovementTime, false);
         rigid.DORotate(playerRotation, horizontalMovementTime);
@@ -142,9 +161,18 @@ public class PlayerController : MonoSingleton<PlayerController>
 
     IEnumerator moveRight()
     {
-        rigid.DOMoveX(line[2], horizontalMovementTime, false);
+        Vector3 playerRotation = transform.rotation.eulerAngles;
+        playerRotation.y = 35;
+
+        rigid.DOMoveX(line[2], horizontalMovementTime / 2, false);
+        rigid.DORotate(playerRotation, horizontalMovementTime / 2);
+
         yield return new WaitForSeconds(horizontalMovementDuration);
+
+        playerRotation.y = 0;
+
         rigid.DOMoveX(line[1], horizontalMovementTime, false);
+        rigid.DORotate(playerRotation, horizontalMovementTime);
     }
 
     IEnumerator slowUp()
