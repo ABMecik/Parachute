@@ -46,7 +46,10 @@ public class SceneManager : MonoSingleton<SceneManager>
         startPos = player.getPosition() - new Vector3(0, SafeZoneRadius, 0);
         endPos = ground.transform.position + new Vector3(0, SafeZoneRadius, 0);
         currentPos = startPos;
+    }
 
+    public void play()
+    {
         StartCoroutine("path");
     }
 
